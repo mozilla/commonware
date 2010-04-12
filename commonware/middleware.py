@@ -1,7 +1,3 @@
-"""
-LICENSE GOES HERE
-"""
-
 class SetRemoteAddrFromForwardedFor:
     """
     Replaces the Django 1.1 middleware to replace the remote IP with
