@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='commonware',
     version='0.1.0',
-    description='A place to stuff we want to share, like middleware.',
+    description='A place to keep stuff we want to share, like middleware.',
     author='James Socol',
     author_email='james@mozilla.com',
     url='http://github.com/jsocol/commonware',
