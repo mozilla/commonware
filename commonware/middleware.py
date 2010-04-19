@@ -25,7 +25,7 @@ class NoVarySessionMiddleware(SessionMiddleware):
         return new_response
 
 
-class SetRemoteAddrFromForwardedFor:
+class SetRemoteAddrFromForwardedFor(object):
     """
     Replaces the Django 1.1 middleware to replace the remote IP with
     the value of the X-Forwarded-For header for use behind reverse proxy
