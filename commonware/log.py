@@ -6,22 +6,22 @@ from django.utils.thread_support import currentThread
 _requests = {}
 
 
-def get_request():
+def get_remote_addr():
     return _requests.get(currentThread())
 
 
-def set_request(request):
-    _requests[currentThread()] = request
+def set_remote_addr(addr):
+    _requests[currentThread()] = addr
 
 
 class ThreadRequestMiddleware(object):
     """
-    Store the current request in thread-local storage so our logging
-    wrapper can access it.
+    Store the current remote address in thread-local storage so our
+    logging wrapper can access it.
     """
 
     def process_request(request):
-        set_request(request)
+        set_remote_addr(request.META.get('REMOTE_ADDR', ''))
 
 
 def getLogger(name):
@@ -38,15 +38,8 @@ class CommonLogger(logging.Logger):
     message.
     """
     
-    extra = {}
-
     def _get_extra(self):
-        if not self.extra:
-            request = get_request()
-            self.extra = {
-                'REMOTE_ADDR': request.META.get('REMOTE_ADDR'),
-            }
-        return self.extra
+        return {'REMOTE_ADDR': get_remote_addr(),}
 
     def info(self, msg):
         logging.Logger.info(self, msg, extra=self._get_extra())
@@ -65,5 +58,3 @@ class CommonLogger(logging.Logger):
 
     def critical(self, msg):
         logging.Logger.exception(self, msg, extra=self._get_extra())
-        
-    
