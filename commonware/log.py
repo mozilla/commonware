@@ -32,11 +32,14 @@ def getLogger(name):
     return CommonLogger(name)
 
 
-class CommonLogger(logging.Logger):
+class CommonLogger(logging.getLoggerClass()):
     """
     A wrapper for logging.Logger that adds the IP address to every logged
     message.
     """
+
+    def __init__(self, name):
+        logging.Logger.__init__(self, name)
     
     def _get_extra(self):
         return {'REMOTE_ADDR': get_remote_addr(),}
@@ -58,3 +61,6 @@ class CommonLogger(logging.Logger):
 
     def critical(self, msg, *args):
         logging.Logger.exception(self, msg % args, extra=self._get_extra())
+
+
+logging.setLoggerClass(CommonLogger)
