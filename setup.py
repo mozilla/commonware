@@ -2,8 +2,9 @@ from setuptools import setup
 
 setup(
     name='commonware',
-    version='0.2.0',
+    version='0.2.1',
     description='A place to keep stuff we want to share, like middleware.',
+    long_description=open('README.rst').read()
     author='James Socol',
     author_email='james@mozilla.com',
     url='http://github.com/jsocol/commonware',
