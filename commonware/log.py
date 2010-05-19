@@ -24,36 +24,23 @@ class ThreadRequestMiddleware(object):
         set_remote_addr(request.META.get('REMOTE_ADDR', ''))
 
 
-class Logger(logging.getLoggerClass()):
+def getLogger(name=None):
     """
-    A wrapper for logging.Logger that adds the IP address to every logged
-    message.
+    Wrap logging.getLogger to return a LoggerAdapter.
 
-    To use CommonLogger instead of logging.Logger, you need to call
-    logging.setLoggerClass(commonware.log.Logger)
-    _before_ you set up your environment logging.
+    If you need to do anything besides make logging calls, use
+    logging.getLogger.
     """
+    logger = logging.getLogger(name)
+    return RemoteAddrAdapter(logger)
 
-    def __init__(self, name):
-        logging.Logger.__init__(self, name)
-    
-    def _get_extra(self):
-        return {'REMOTE_ADDR': get_remote_addr(),}
 
-    def info(self, msg, *args):
-        logging.Logger.info(self, msg, *args, extra=self._get_extra())
+class RemoteAddrAdapter(logging.LoggerAdapter):
+    """Adds the REMOTE_ADDR to every logging message's kwargs."""
 
-    def debug(self, msg, *args):
-        logging.Logger.debug(self, msg, *args, extra=self._get_extra())
+    def __init__(self, logger, extra=None):
+        logging.LoggerAdapter.__init__(self, logger, extra or {})
 
-    def warning(self, msg, *args):
-        logging.Logger.warning(self, msg, *args, extra=self._get_extra())
-
-    def error(self, msg, *args):
-        logging.Logger.error(self, msg, *args, extra=self._get_extra())
-
-    def exception(self, msg, *args):
-        logging.Logger.exception(self, msg, *args, extra=self._get_extra())
-
-    def critical(self, msg, *args):
-        logging.Logger.exception(self, msg, *args, extra=self._get_extra())
+    def process(self, msg, kwargs):
+        kwargs['extra'] = {'REMOTE_ADDR': get_remote_addr()}
+        return msg, kwargs
