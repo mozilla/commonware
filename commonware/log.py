@@ -44,3 +44,13 @@ class RemoteAddrAdapter(logging.LoggerAdapter):
     def process(self, msg, kwargs):
         kwargs['extra'] = {'REMOTE_ADDR': get_remote_addr()}
         return msg, kwargs
+
+
+class Formatter(logging.Formatter):
+    """Formatter that makes sure REMOTE_ADDR is available."""
+
+    def format(self, record):
+        if ('%(REMOTE_ADDR)' in self._fmt
+            and 'REMOTE_ADDR' not in record.__dict__):
+            record.__dict__['REMOTE_ADDR'] = None
+        return logging.Formatter.format(self, record)
