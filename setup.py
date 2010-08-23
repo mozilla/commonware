@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='commonware',
-    version='0.2.1',
+    version='0.2.2',
     description='A place to keep stuff we want to share, like middleware.',
     long_description=open('README.rst').read(),
     author='James Socol',

@@ -40,3 +40,17 @@ class SetRemoteAddrFromForwardedFor(object):
 
         real_ip = real_ip.split(',')[0].strip()
         request.META['REMOTE_ADDR'] = real_ip
+
+
+class FrameOptionsHeader(object):
+    """
+    Set an X-Frame-Options header. Default to DENY. Set
+    response['x-frame-options'] = 'SAMEORIGIN'
+    to override.
+    """
+
+    def process_response(self, request, response):
+        if not 'x-frame-options' in response:
+            response['x-frame-options'] = 'DENY'
+
+        return response
