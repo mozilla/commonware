@@ -1,7 +1,4 @@
-try:
-    from functools import wraps
-except ImportError:
-    from django.utls.functional import wraps
+from functools import wraps
 
 from django.utils.decorators import available_attrs
 
