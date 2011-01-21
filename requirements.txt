@@ -1,0 +1,6 @@
+# These are required to run the tests.
+nose
+mock
+fabric
+-e git+http://github.com/django/django.git@a85fe4dddc4b13#egg=Django
+-e git+git://github.com/jbalogh/test-utils.git#egg=test_utils
