@@ -28,14 +28,3 @@ def xframe_deny(view_fn):
         response['x-frame-options'] = 'DENY'
         return response
     return _wrapped_view
-
-
-def js_cookies(*cookies):
-    def decorator(view_fn):
-        @wraps(view_fn, assigned=available_attrs(view_fn))
-        def _wrapped_view(request, *args, **kwargs):
-            response = view_fn(request, *args, **kwargs)
-            response.js_cookies = cookies
-            return response
-        return _wrapped_view
-    return decorator
