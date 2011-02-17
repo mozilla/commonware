@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.sessions.middleware import SessionMiddleware
 
 
@@ -15,6 +16,11 @@ class NoVarySessionMiddleware(SessionMiddleware):
     def process_response(self, request, response):
         # Let SessionMiddleware do its processing but prevent it from changing
         # the Vary header.
+
+        # If we're in read-only mode, die early.
+        if getattr(settings, 'READ_ONLY', False):
+            return response
+
         vary = response.get('Vary', None)
         new_response = (super(NoVarySessionMiddleware, self)
                         .process_response(request, response))
