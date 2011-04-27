@@ -1,15 +1,15 @@
-from django.utils.thread_support import currentThread
+import threading
 
 
-_requests = {}
+_local = threading.local()
 
 
 def get_remote_addr():
-    return _requests.get(currentThread())
+    return getattr(_local, 'remote_addr', None)
 
 
-def set_remote_addr(addr):
-    _requests[currentThread()] = addr
+def get_username():
+    return getattr(_local, 'username', '<anon>')
 
 
 class ThreadRequestMiddleware(object):
@@ -19,4 +19,8 @@ class ThreadRequestMiddleware(object):
     """
 
     def process_request(self, request):
-        set_remote_addr(request.META.get('REMOTE_ADDR', ''))
+        _local.remote_addr = request.META.get('REMOTE_ADDR', '')
+        name = '<anon>'
+        if hasattr(request, 'user') and request.user.is_authenticated():
+            name = request.user.username
+        _local.username = name
