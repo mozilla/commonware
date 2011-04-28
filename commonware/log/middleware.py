@@ -1,5 +1,7 @@
 import threading
 
+from django.utils import encoding
+
 
 _local = threading.local()
 
@@ -9,7 +11,7 @@ def get_remote_addr():
 
 
 def get_username():
-    return getattr(_local, 'username', u'<anon>')
+    return getattr(_local, 'username', '<anon>')
 
 
 class ThreadRequestMiddleware(object):
@@ -19,8 +21,8 @@ class ThreadRequestMiddleware(object):
     """
 
     def process_request(self, request):
-        _local.remote_addr = request.META.get('REMOTE_ADDR', u'')
-        name = u'<anon>'
+        _local.remote_addr = request.META.get('REMOTE_ADDR', '')
+        name = '<anon>'
         if hasattr(request, 'user') and request.user.is_authenticated():
-            name = request.user.username
+            name = encoding.smart_str(request.user.username)
         _local.username = name
