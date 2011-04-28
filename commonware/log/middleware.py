@@ -9,7 +9,7 @@ def get_remote_addr():
 
 
 def get_username():
-    return getattr(_local, 'username', '<anon>')
+    return getattr(_local, 'username', u'<anon>')
 
 
 class ThreadRequestMiddleware(object):
@@ -19,8 +19,8 @@ class ThreadRequestMiddleware(object):
     """
 
     def process_request(self, request):
-        _local.remote_addr = request.META.get('REMOTE_ADDR', '')
-        name = '<anon>'
+        _local.remote_addr = request.META.get('REMOTE_ADDR', u'')
+        name = u'<anon>'
         if hasattr(request, 'user') and request.user.is_authenticated():
             name = request.user.username
         _local.username = name
