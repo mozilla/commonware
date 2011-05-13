@@ -7,7 +7,7 @@ automatically.
 import functools
 import os
 
-from fabric.api import local
+from fabric.api import local as _local
 
 
 NAME = os.path.basename(os.path.dirname(__file__))
@@ -17,12 +17,19 @@ os.environ['DJANGO_SETTINGS_MODULE'] = '%s-project.settings' % NAME
 os.environ['PYTHONPATH'] = os.pathsep.join([ROOT,
                                             os.path.join(ROOT, 'examples')])
 
-local = functools.partial(local, capture=False)
+_local = functools.partial(_local, capture=False)
 
 
 def shell():
-    local('django-admin.py shell')
+    """Open a Django shell."""
+    _local('django-admin.py shell')
 
 
 def test():
-    local('nosetests')
+    """Run the tests."""
+    _local('nosetests -s')
+
+
+def coverage():
+    """Run the tests with a coverage report."""
+    _local('nosetests -s --with-coverage --cover-package=commonware')

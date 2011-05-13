@@ -4,3 +4,6 @@ pip-log.txt
 .DS_Store
 .noseids
 *~
+*.egg-info
+dist
+.coverage
