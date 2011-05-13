@@ -1,15 +1,25 @@
+from django.conf import settings
 from django.http import HttpResponse
 
+import mock
 from nose.tools import eq_
 
 from commonware.response import middleware
 
 
-def test_force_tls_middleware():
+def test_sts_middleware():
     mw = middleware.StrictTransportMiddleware()
     resp = mw.process_response({}, HttpResponse())
     assert 'strict-transport-security' in resp
     eq_('max-age=2592000', resp['strict-transport-security'])
+
+
+@mock.patch.object(settings._wrapped, 'STS_SUBDOMAINS', True)
+def test_sts_middleware_subdomains():
+    mw = middleware.StrictTransportMiddleware()
+    resp = mw.process_response({}, HttpResponse())
+    assert 'strict-transport-security' in resp
+    assert resp['strict-transport-security'].endswith('includeSubDomains')
 
 
 def test_xframe_middleware():

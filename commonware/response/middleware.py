@@ -21,11 +21,16 @@ class FrameOptionsHeader(object):
 class StrictTransportMiddleware(object):
     """
     Set the Strict-Transport-Security header on responses. Use the
-    STS_MAX_AGE setting to control the max-age value.
-    (Default: 1 month.)
+    STS_MAX_AGE setting to control the max-age value. (Default: 1 month.)
+    Use the STS_SUBDOMAINS boolean to add includeSubdomains.
+    (Default: False.)
     """
 
     def process_response(self, request, response):
         age = getattr(settings, 'STS_MAX_AGE', 2592000)  # 30 days.
-        response['Strict-Transport-Security'] = 'max-age=%d' % age
+        subdomains = getattr(settings, 'STS_SUBDOMAINS', False)
+        val = 'max-age=%d' % age
+        if subdomains:
+            val += '; includeSubDomains'
+        response['Strict-Transport-Security'] = val
         return response
