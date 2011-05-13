@@ -16,3 +16,16 @@ class FrameOptionsHeader(object):
             response['x-frame-options'] = 'DENY'
 
         return response
+
+
+class StrictTransportMiddleware(object):
+    """
+    Set the Strict-Transport-Security header on responses. Use the
+    STS_MAX_AGE setting to control the max-age value.
+    (Default: 1 month.)
+    """
+
+    def process_response(self, request, response):
+        age = getattr(settings, 'STS_MAX_AGE', 2592000)  # 30 days.
+        response['Strict-Transport-Security'] = 'max-age=%d' % age
+        return response
