@@ -1,6 +1,17 @@
 from django.conf import settings
 
 
+class _statsd(object):
+    def incr(s, *a, **kw):
+        pass
+
+
+try:
+    from statsd import statsd
+except ImportError:
+    statsd = _statsd()
+
+
 class FrameOptionsHeader(object):
     """
     Set an X-Frame-Options header. Default to DENY. Set
@@ -34,3 +45,13 @@ class StrictTransportMiddleware(object):
             val += '; includeSubDomains'
         response['Strict-Transport-Security'] = val
         return response
+
+
+class GraphiteMiddleware(object):
+
+    def process_response(self, request, response):
+        statsd.incr('response.%s' % response.status_code)
+        return response
+
+    def process_exception(self, request, exception):
+        statsd.incr('response.500')
