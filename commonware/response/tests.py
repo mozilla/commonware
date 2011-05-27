@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.http import HttpResponse
+from django.test.client import RequestFactory
 
 import mock
 from nose.tools import eq_
@@ -43,3 +44,21 @@ def test_xframe_middleware_disable():
     resp.no_frame_options = True
     resp = mw.process_response({}, resp)
     assert not 'x-frame-options' in resp
+
+
+@mock.patch.object(middleware.statsd, 'incr')
+def test_graphite_response(incr):
+    req = RequestFactory().get('/')
+    res = HttpResponse()
+    gmw = middleware.GraphiteMiddleware()
+    gmw.process_response(req, res)
+    assert incr.called
+
+
+@mock.patch.object(middleware.statsd, 'incr')
+def test_graphite_exception(incr):
+    req = RequestFactory().get('/')
+    ex = None
+    gmw = middleware.GraphiteMiddleware()
+    gmw.process_exception(req, ex)
+    assert incr.called
