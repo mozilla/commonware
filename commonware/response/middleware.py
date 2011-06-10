@@ -1,8 +1,13 @@
+import time
+
 from django.conf import settings
 
 
 class _statsd(object):
     def incr(s, *a, **kw):
+        pass
+
+    def timing(s, *a, **kw):
         pass
 
 
@@ -55,3 +60,29 @@ class GraphiteMiddleware(object):
 
     def process_exception(self, request, exception):
         statsd.incr('response.500')
+
+
+class GraphiteRequestTimingMiddleware(object):
+    """statsd's timing data per view."""
+    def process_request(self, request):
+        request._start_time = time.time()
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        view = view_func
+        if hasattr(view, '__class__'):  # Feed and other class-based views
+            view = view.__class__
+        request._view_name = '{m}.{v}'.format(m=view.__module__,
+                                              v=view.__name__)
+
+    def process_response(self, request, response):
+        self._record_time(request)
+        return response
+
+    def process_exception(self, request, exception):
+        self._record_time(request)
+
+    def _record_time(self, request):
+        if hasattr(request, '_view_name'):
+            ms = (time.time() - request._start_time) * 1000
+            statsd.timing('view.{v}.{m}'.format(v=request._view_name,
+                                                m=request.method), ms)
