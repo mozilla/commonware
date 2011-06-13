@@ -1,3 +1,4 @@
+import inspect
 import time
 
 from django.conf import settings
@@ -67,7 +68,7 @@ class GraphiteRequestTimingMiddleware(object):
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         view = view_func
-        if not callable(view_func):
+        if not inspect.isfunction(view_func):
             view = view.__class__
         try:
             request._statsd_timing = 'view.{n}.{v}.{m}'.format(
