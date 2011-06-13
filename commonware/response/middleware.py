@@ -67,15 +67,14 @@ class GraphiteRequestTimingMiddleware(object):
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         view = view_func
-        if hasattr(view, '__class__'):  # Feed and other class-based views
+        if not callable(view_func):
             view = view.__class__
         try:
-            request._view_name = '{m}.{v}'.format(m=view.__module__,
-                                                  v=view.__name__)
+            request._statsd_timing = 'view.{n}.{v}.{m}'.format(
+                n=view.__module__, v=view.__name__, m=request.method)
+            request._start_time = time.time()
         except AttributeError:
             pass
-
-        request._start_time = time.time()
 
     def process_response(self, request, response):
         self._record_time(request)
@@ -85,7 +84,6 @@ class GraphiteRequestTimingMiddleware(object):
         self._record_time(request)
 
     def _record_time(self, request):
-        if hasattr(request, '_view_name'):
+        if hasattr(request, '_statsd_timing'):
             ms = int((time.time() - request._start_time) * 1000)
-            statsd.timing('view.{v}.{m}'.format(v=request._view_name,
-                                                m=request.method), ms)
+            statsd.timing(request._statsd_timing, ms)
