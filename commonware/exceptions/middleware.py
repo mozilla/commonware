@@ -1,6 +1,11 @@
-class HidePasswordOnException(object):
+from django.conf import settings
+
+
+class ScrubRequestOnException(object):
     """
-    Hide passwords in request.POST so they're not recorded in error logging.
+    Hide sensitive information so they're not recorded in error logging.
+    * passwords in request.POST
+    * sessionid in request.COOKIES
     """
 
     def process_exception(self, request, exception):
@@ -9,3 +14,21 @@ class HidePasswordOnException(object):
         for key in request.POST:
             if 'password' in key.lower():
                 request.POST[key] = '******'
+
+        # Remove session id from cookies
+        if settings.SESSION_COOKIE_NAME in request.COOKIES:
+            request.COOKIES[settings.SESSION_COOKIE_NAME] = '******'
+            # Clearing out all cookies in request.META. They will already
+            # be sent with request.COOKIES.
+            request.META['HTTP_COOKIE'] = '******'
+
+
+class HidePasswordOnException(ScrubRequestOnException):
+    def __init__(self):        
+        import warnings
+        warnings.warn(
+            "The middleware at `commonware.middleware.HidePasswordOnException` "
+            "is deprecated; use `commonware.middleware.ScrubRequestOnException` "
+            "instead.",
+            DeprecationWarning
+        )
