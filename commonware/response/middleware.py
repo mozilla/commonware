@@ -57,10 +57,14 @@ class GraphiteMiddleware(object):
 
     def process_response(self, request, response):
         statsd.incr('response.%s' % response.status_code)
+        if request.user.is_authenticated():
+            statsd.incr('response.auth.%s' % response.status_code)
         return response
 
     def process_exception(self, request, exception):
         statsd.incr('response.500')
+        if request.user.is_authenticated():
+            statsd.incr('response.auth.500')
 
 
 class GraphiteRequestTimingMiddleware(object):
