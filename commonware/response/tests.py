@@ -56,9 +56,31 @@ def test_graphite_response(incr):
 
 
 @mock.patch.object(middleware.statsd, 'incr')
+def test_graphite_response_authenticated(incr):
+    req = RequestFactory().get('/')
+    req.user = mock.Mock()
+    req.user.is_authenticated.return_value = True
+    res = HttpResponse()
+    gmw = middleware.GraphiteMiddleware()
+    gmw.process_response(req, res)
+    eq_(incr.call_count, 2)
+
+
+@mock.patch.object(middleware.statsd, 'incr')
 def test_graphite_exception(incr):
     req = RequestFactory().get('/')
     ex = None
     gmw = middleware.GraphiteMiddleware()
     gmw.process_exception(req, ex)
     assert incr.called
+
+
+@mock.patch.object(middleware.statsd, 'incr')
+def test_graphite_exception_authenticated(incr):
+    req = RequestFactory().get('/')
+    req.user = mock.Mock()
+    req.user.is_authenticated.return_value = True
+    ex = None
+    gmw = middleware.GraphiteMiddleware()
+    gmw.process_exception(req, ex)
+    eq_(incr.call_count, 2)
