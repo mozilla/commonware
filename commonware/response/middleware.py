@@ -57,10 +57,14 @@ class GraphiteMiddleware(object):
 
     def process_response(self, request, response):
         statsd.incr('response.%s' % response.status_code)
+        if request.user.is_authenticated():
+            statsd.incr('response.auth.%s' % response.status_code)
         return response
 
     def process_exception(self, request, exception):
         statsd.incr('response.500')
+        if request.user.is_authenticated():
+            statsd.incr('response.auth.500')
 
 
 class GraphiteRequestTimingMiddleware(object):
@@ -71,8 +75,8 @@ class GraphiteRequestTimingMiddleware(object):
         if not inspect.isfunction(view_func):
             view = view.__class__
         try:
-            request._statsd_timing = 'view.{n}.{v}.{m}'.format(
-                n=view.__module__, v=view.__name__, m=request.method)
+            request._view_module = view.__module__
+            request._view_name = view.__name__
             request._start_time = time.time()
         except AttributeError:
             pass
@@ -85,6 +89,10 @@ class GraphiteRequestTimingMiddleware(object):
         self._record_time(request)
 
     def _record_time(self, request):
-        if hasattr(request, '_statsd_timing'):
+        if hasattr(request, '_start_time'):
             ms = int((time.time() - request._start_time) * 1000)
-            statsd.timing(request._statsd_timing, ms)
+            data = dict(module=request._view_module, name=request._view_name,
+                        method=request.method)
+            statsd.timing('view.{module}.{name}.{method}'.format(**data), ms)
+            statsd.timing('view.{module}.{method}'.format(**data), ms)
+            statsd.timing('view.{method}'.format(**data), ms)
