@@ -84,3 +84,35 @@ def test_graphite_exception_authenticated(incr):
     gmw = middleware.GraphiteMiddleware()
     gmw.process_exception(req, ex)
     eq_(incr.call_count, 2)
+
+
+@mock.patch.object(middleware.statsd, 'timing')
+def test_request_timing(timing):
+    func = lambda x: x
+    req = RequestFactory().get('/')
+    res = HttpResponse()
+    gmw = middleware.GraphiteRequestTimingMiddleware()
+    gmw.process_view(req, func, tuple(), dict())
+    gmw.process_response(req, res)
+    eq_(timing.call_count, 3)
+    names = ['view.%s.%s.GET' % (func.__module__, func.__name__),
+             'view.%s.GET' % func.__module__,
+             'view.GET']
+    for expected, (args, kwargs) in zip(names, timing.call_args_list):
+        eq_(expected, args[0])
+
+
+@mock.patch.object(middleware.statsd, 'timing')
+def test_request_timing_exception(timing):
+    func = lambda x: x
+    req = RequestFactory().get('/')
+    res = HttpResponse()
+    gmw = middleware.GraphiteRequestTimingMiddleware()
+    gmw.process_view(req, func, tuple(), dict())
+    gmw.process_exception(req, res)
+    eq_(timing.call_count, 3)
+    names = ['view.%s.%s.GET' % (func.__module__, func.__name__),
+             'view.%s.GET' % func.__module__,
+             'view.GET']
+    for expected, (args, kwargs) in zip(names, timing.call_args_list):
+        eq_(expected, args[0])
