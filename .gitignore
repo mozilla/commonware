@@ -1,5 +1,6 @@
 *.py[co]
 *.sw[po]
+.idea
 pip-log.txt
 .DS_Store
 .noseids
