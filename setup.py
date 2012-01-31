@@ -9,7 +9,7 @@ setup(
     author_email='james@mozilla.com',
     url='http://github.com/jsocol/commonware',
     license='BSD',
-    packages=['commonware'],
+    packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
     classifiers=[
