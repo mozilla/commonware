@@ -2,6 +2,17 @@ import socket
 
 from django.conf import settings
 
+TYPES = (socket.AF_INET, socket.AF_INET6)
+
+def is_valid(ip):
+    for af in TYPES:
+        try:
+            socket.inet_pton(af, ip)
+            return True
+        except socket.error:
+            pass
+    return False
+
 
 class SetRemoteAddrFromForwardedFor(object):
     """
@@ -12,13 +23,6 @@ class SetRemoteAddrFromForwardedFor(object):
 
     def process_request(self, request):
         ips = []
-
-        def is_valid(ip):
-            try:
-                socket.inet_aton(ip)
-                return True
-            except socket.error:
-                return False
 
         if 'HTTP_X_FORWARDED_FOR' in request.META:
             xff = [i.strip() for i in

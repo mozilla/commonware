@@ -4,7 +4,7 @@ import mock
 from nose.tools import eq_
 from test_utils import RequestFactory
 
-from commonware.request.middleware import SetRemoteAddrFromForwardedFor
+from commonware.request.middleware import SetRemoteAddrFromForwardedFor, is_valid
 
 
 mw = SetRemoteAddrFromForwardedFor()
@@ -59,3 +59,22 @@ def test_xff_all_known():
     req.META['HTTP_X_FORWARDED_FOR'] = '2.3.4.5'
     mw.process_request(req)
     eq_('2.3.4.5', req.META['REMOTE_ADDR'])
+
+
+def test_is_valid():
+    """IPv4 and IPv6 addresses are OK."""
+    tests = (
+        ('1.2.3.4', True),
+        ('2.3.4.5', True),
+        ('foobar', False),
+        ('4.256.4.12', False),
+        ('fe80::a00:27ff:fed5:56e0', True),
+        ('fe80::a00:277ff:fed5:56e0', False),
+        ('fe80::a00:27ff:ged5:56e0', False),
+    )
+
+    def _check(i, v):
+        eq_(v, is_valid(i))
+
+    for i, v in tests:
+        yield _check, i, v
