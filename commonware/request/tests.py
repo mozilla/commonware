@@ -4,7 +4,8 @@ import mock
 from nose.tools import eq_
 from test_utils import RequestFactory
 
-from commonware.request.middleware import SetRemoteAddrFromForwardedFor, is_valid
+from commonware.request.middleware import (SetRemoteAddrFromForwardedFor,
+                                           is_valid)
 
 
 mw = SetRemoteAddrFromForwardedFor()
