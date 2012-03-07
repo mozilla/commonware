@@ -44,12 +44,13 @@ class StrictTransportMiddleware(object):
     """
 
     def process_response(self, request, response):
-        age = getattr(settings, 'STS_MAX_AGE', 2592000)  # 30 days.
-        subdomains = getattr(settings, 'STS_SUBDOMAINS', False)
-        val = 'max-age=%d' % age
-        if subdomains:
-            val += '; includeSubDomains'
-        response['Strict-Transport-Security'] = val
+        if request.is_secure():
+            age = getattr(settings, 'STS_MAX_AGE', 2592000)  # 30 days.
+            subdomains = getattr(settings, 'STS_SUBDOMAINS', False)
+            val = 'max-age=%d' % age
+            if subdomains:
+                val += '; includeSubDomains'
+            response['Strict-Transport-Security'] = val
         return response
 
 
