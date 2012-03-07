@@ -1,8 +1,10 @@
 from setuptools import setup, find_packages
 
+from commonware import __version__
+
 setup(
     name='commonware',
-    version='0.2.4',
+    version=__version__,
     description='A place to keep stuff we want to share, like middleware.',
     long_description=open('README.rst').read(),
     author='James Socol',
