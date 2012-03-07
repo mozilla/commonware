@@ -8,24 +8,32 @@ from nose.tools import eq_
 from commonware.response import middleware
 
 
+def _make_resp(mw_cls, secure=False):
+    mw = mw_cls()
+    req = RequestFactory().get('/')
+    if secure:
+        req.is_secure = lambda: True
+    resp = mw.process_response(req, HttpResponse())
+    return resp
+
+
 def test_sts_middleware():
-    mw = middleware.StrictTransportMiddleware()
-    resp = mw.process_response({}, HttpResponse())
+    resp = _make_resp(middleware.StrictTransportMiddleware)
+    assert 'strict-transport-security' not in resp
+    resp = _make_resp(middleware.StrictTransportMiddleware, secure=True)
     assert 'strict-transport-security' in resp
     eq_('max-age=2592000', resp['strict-transport-security'])
 
 
 @mock.patch.object(settings._wrapped, 'STS_SUBDOMAINS', True)
 def test_sts_middleware_subdomains():
-    mw = middleware.StrictTransportMiddleware()
-    resp = mw.process_response({}, HttpResponse())
+    resp = _make_resp(middleware.StrictTransportMiddleware, secure=True)
     assert 'strict-transport-security' in resp
     assert resp['strict-transport-security'].endswith('includeSubDomains')
 
 
 def test_xframe_middleware():
-    mw = middleware.FrameOptionsHeader()
-    resp = mw.process_response({}, HttpResponse())
+    resp = _make_resp(middleware.FrameOptionsHeader)
     assert 'x-frame-options' in resp
     eq_('DENY', resp['x-frame-options'])
 
@@ -48,10 +56,7 @@ def test_xframe_middleware_disable():
 
 @mock.patch.object(middleware.statsd, 'incr')
 def test_graphite_response(incr):
-    req = RequestFactory().get('/')
-    res = HttpResponse()
-    gmw = middleware.GraphiteMiddleware()
-    gmw.process_response(req, res)
+    _make_resp(middleware.GraphiteMiddleware)
     assert incr.called
 
 
