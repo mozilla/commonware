@@ -1,21 +1,4 @@
-import inspect
-import time
-
 from django.conf import settings
-
-
-class _statsd(object):
-    def incr(s, *a, **kw):
-        pass
-
-    def timing(s, *a, **kw):
-        pass
-
-
-try:
-    from statsd import statsd
-except ImportError:
-    statsd = _statsd()
 
 
 class FrameOptionsHeader(object):
