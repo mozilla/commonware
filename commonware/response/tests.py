@@ -80,3 +80,17 @@ def test_contenttypeoptions_middleware_no_overwrite():
     resp['X-Content-Type-Options'] = ''
     resp = mw.process_response({}, resp)
     eq_('', resp['X-Content-Type-Options'])
+
+
+def test_xrobotstag_middleware():
+    resp = _make_resp(middleware.RobotsTagHeader)
+    assert 'X-Robots-Tag' in resp
+    eq_('noodp', resp['X-Robots-Tag'])
+
+
+def test_xrobotstag_middleware_no_overwrite():
+    mw = middleware.RobotsTagHeader()
+    resp = HttpResponse()
+    resp['X-Robots-Tag'] = 'noindex'
+    resp = mw.process_response({}, resp)
+    eq_('noindex', resp['X-Robots-Tag'])

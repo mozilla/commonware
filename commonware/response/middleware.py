@@ -18,6 +18,16 @@ class FrameOptionsHeader(object):
         return response
 
 
+class RobotsTagHeader(object):
+    """Set an X-Robots-Tag header. Default to noodp."""
+
+    def process_response(self, request, response):
+        if not 'X-Robots-Tag' in response:
+            default = getattr(settings, 'X_ROBOTS_DEFAULT', 'noodp')
+            response['X-Robots-Tag'] = default
+        return response
+
+
 class StrictTransportMiddleware(object):
     """
     Set the Strict-Transport-Security header on responses. Use the
