@@ -52,3 +52,15 @@ def test_xframe_middleware_disable():
     resp.no_frame_options = True
     resp = mw.process_response({}, resp)
     assert not 'x-frame-options' in resp
+
+
+def test_xssprotection_middleware():
+    resp = _make_resp(middleware.XSSProtectionHeader)
+    assert 'x-xss-protection' in resp
+    eq_('1; mode=block', resp['x-xss-protection'])
+
+
+def test_contenttypeoptions_middleware():
+    resp = _make_resp(middleware.ContentTypeOptionsHeader)
+    assert 'x-content-type-options' in resp
+    eq_('nosniff', resp['x-content-type-options'])

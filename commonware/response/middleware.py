@@ -52,3 +52,23 @@ class StrictTransportMiddleware(object):
                 val += '; includeSubDomains'
             response['Strict-Transport-Security'] = val
         return response
+
+
+class XSSProtectionHeader(object):
+    """
+    Set the X-XSS-Protection header on responses.
+    """
+
+    def process_response(self, request, response):
+        response['x-xss-protection'] = '1; mode=block'
+        return response
+
+
+class ContentTypeOptionsHeader(object):
+    """
+    Set the X-Content-Type-Options header on responses.
+    """
+
+    def process_response(self, request, response):
+        response['x-content-type-options'] = 'nosniff'
+        return response
