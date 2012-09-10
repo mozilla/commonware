@@ -56,11 +56,27 @@ def test_xframe_middleware_disable():
 
 def test_xssprotection_middleware():
     resp = _make_resp(middleware.XSSProtectionHeader)
-    assert 'x-xss-protection' in resp
-    eq_('1; mode=block', resp['x-xss-protection'])
+    assert 'X-XSS-Protection' in resp
+    eq_('1; mode=block', resp['X-XSS-Protection'])
+
+
+def test_xssprotection_middleware_no_overwrite():
+    mw = middleware.XSSProtectionHeader()
+    resp = HttpResponse()
+    resp['X-XSS-Protection'] = '1'
+    resp = mw.process_response({}, resp)
+    eq_('1', resp['X-XSS-Protection'])
 
 
 def test_contenttypeoptions_middleware():
     resp = _make_resp(middleware.ContentTypeOptionsHeader)
-    assert 'x-content-type-options' in resp
-    eq_('nosniff', resp['x-content-type-options'])
+    assert 'X-Content-Type-Options' in resp
+    eq_('nosniff', resp['X-Content-Type-Options'])
+
+
+def test_contenttypeoptions_middleware_no_overwrite():
+    mw = middleware.ContentTypeOptionsHeader()
+    resp = HttpResponse()
+    resp['X-Content-Type-Options'] = ''
+    resp = mw.process_response({}, resp)
+    eq_('', resp['X-Content-Type-Options'])
