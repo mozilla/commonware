@@ -21,7 +21,7 @@ except ImportError:
 class FrameOptionsHeader(object):
     """
     Set an X-Frame-Options header. Default to DENY. Set
-    response['x-frame-options'] = 'SAMEORIGIN'
+    response['X-Frame-Options'] = 'SAMEORIGIN'
     to override.
     """
 
@@ -29,8 +29,8 @@ class FrameOptionsHeader(object):
         if hasattr(response, 'no_frame_options'):
             return response
 
-        if not 'x-frame-options' in response:
-            response['x-frame-options'] = 'DENY'
+        if not 'X-Frame-Options' in response:
+            response['X-Frame-Options'] = 'DENY'
 
         return response
 
