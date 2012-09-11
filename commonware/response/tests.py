@@ -19,31 +19,31 @@ def _make_resp(mw_cls, secure=False):
 
 def test_sts_middleware():
     resp = _make_resp(middleware.StrictTransportMiddleware)
-    assert 'strict-transport-security' not in resp
+    assert 'Strict-Transport-Security' not in resp
     resp = _make_resp(middleware.StrictTransportMiddleware, secure=True)
-    assert 'strict-transport-security' in resp
-    eq_('max-age=2592000', resp['strict-transport-security'])
+    assert 'Strict-Transport-Security' in resp
+    eq_('max-age=2592000', resp['Strict-Transport-Security'])
 
 
 @mock.patch.object(settings._wrapped, 'STS_SUBDOMAINS', True)
 def test_sts_middleware_subdomains():
     resp = _make_resp(middleware.StrictTransportMiddleware, secure=True)
-    assert 'strict-transport-security' in resp
-    assert resp['strict-transport-security'].endswith('includeSubDomains')
+    assert 'Strict-Transport-Security' in resp
+    assert resp['Strict-Transport-Security'].endswith('includeSubDomains')
 
 
 def test_xframe_middleware():
     resp = _make_resp(middleware.FrameOptionsHeader)
-    assert 'x-frame-options' in resp
-    eq_('DENY', resp['x-frame-options'])
+    assert 'X-Frame-Options' in resp
+    eq_('DENY', resp['X-Frame-Options'])
 
 
 def test_xframe_middleware_no_overwrite():
     mw = middleware.FrameOptionsHeader()
     resp = HttpResponse()
-    resp['x-frame-options'] = 'SAMEORIGIN'
+    resp['X-Frame-Options'] = 'SAMEORIGIN'
     resp = mw.process_response({}, resp)
-    eq_('SAMEORIGIN', resp['x-frame-options'])
+    eq_('SAMEORIGIN', resp['X-Frame-Options'])
 
 
 def test_xframe_middleware_disable():
@@ -51,7 +51,7 @@ def test_xframe_middleware_disable():
     resp = HttpResponse()
     resp.no_frame_options = True
     resp = mw.process_response({}, resp)
-    assert not 'x-frame-options' in resp
+    assert not 'X-Frame-Options' in resp
 
 
 def test_xssprotection_middleware():
