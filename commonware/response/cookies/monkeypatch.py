@@ -31,28 +31,19 @@ def set_cookie_secure(f):
         # - feature disabled or
         # - secure=* defined in set_cookie call or
         # - this is not an HTTPS request.
-        if (getattr(settings, 'COOKIES_SECURE', None) != False and
-            not 'secure' in kwargs and
-            os.environ.get('HTTPS') == 'on'):
+        if (getattr(settings, 'COOKIES_SECURE', True) and
+                'secure' not in kwargs and
+                os.environ.get('HTTPS', 'off') == 'on'):
             kwargs['secure'] = True
 
         # Set httponly flag unless feature disabled. Defaults to httponly=True
         # unless httponly=* was defined in set_cookie call.
-        httponly = None
-        if getattr(settings, 'COOKIES_HTTPONLY', None) != False:
-            if 'httponly' in kwargs:
-                httponly = kwargs['httponly']
-                del kwargs['httponly']
-            else:
-                httponly = True
+        if (getattr(settings, 'COOKIES_HTTPONLY', True) and
+                'httponly' not in kwargs):
+            kwargs['httponly'] = True
 
-        r = f(self, *args, **kwargs)
+        return f(self, *args, **kwargs)
 
-        if httponly:
-            key = kwargs.get('key') or args[0]
-            self.cookies[key]['httponly'] = httponly
-
-        return r
     return wrapped
 
 
