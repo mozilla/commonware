@@ -21,14 +21,3 @@ class ScrubRequestOnException(object):
             # Clearing out all cookies in request.META. They will already
             # be sent with request.COOKIES.
             request.META['HTTP_COOKIE'] = '******'
-
-
-class HidePasswordOnException(ScrubRequestOnException):
-    def __init__(self):        
-        import warnings
-        warnings.warn(
-            "The middleware at `commonware.middleware.HidePasswordOnException` "
-            "is deprecated; use `commonware.middleware.ScrubRequestOnException` "
-            "instead.",
-            DeprecationWarning
-        )

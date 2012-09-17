@@ -1,6 +1,5 @@
 from django.http import HttpResponse
 from mock import patch
-from nose.tools import eq_
 
 from commonware.response.cookies.monkeypatch import patch_all
 

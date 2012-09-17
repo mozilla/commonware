@@ -4,6 +4,7 @@ from django.conf import settings
 
 TYPES = (socket.AF_INET, socket.AF_INET6)
 
+
 def is_valid(ip):
     for af in TYPES:
         try:
