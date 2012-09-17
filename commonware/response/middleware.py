@@ -19,12 +19,23 @@ class FrameOptionsHeader(object):
 
 
 class RobotsTagHeader(object):
-    """Set an X-Robots-Tag header. Default to noodp."""
+    """Set an X-Robots-Tag header.
+
+    Default to noodp to avoid using directories for page titles. Set
+    a value of response['X-Robots-Tag'] or use the relevant decorators
+    to override.
+
+    Change the default in settings by setting X_ROBOTS_DEFAULT = ''.
+    """
 
     def process_response(self, request, response):
+        if getattr(response, 'no_robots_tag', False):
+            return response
+
         if not 'X-Robots-Tag' in response:
             default = getattr(settings, 'X_ROBOTS_DEFAULT', 'noodp')
             response['X-Robots-Tag'] = default
+
         return response
 
 

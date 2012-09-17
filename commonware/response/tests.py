@@ -5,7 +5,20 @@ from django.test.client import RequestFactory
 import mock
 from nose.tools import eq_
 
-from commonware.response import middleware
+from commonware.response import decorators, middleware
+
+
+view_fn = lambda *a: HttpResponse()
+
+
+def _wrapped_resp(decorator, fn, mw_cls=None):
+    req = RequestFactory().get('/')
+    _wrapped = decorator(fn)
+    resp = _wrapped(req)
+    if mw_cls is not None:
+        mw = mw_cls()
+        resp = mw.process_response(req, resp)
+    return resp
 
 
 def _make_resp(mw_cls, secure=False):
@@ -46,11 +59,22 @@ def test_xframe_middleware_no_overwrite():
     eq_('SAMEORIGIN', resp['X-Frame-Options'])
 
 
+def test_xframe_sameorigin_decorator():
+    resp = _wrapped_resp(decorators.xframe_sameorigin, view_fn,
+                         middleware.FrameOptionsHeader)
+    assert 'X-Frame-Options' in resp
+    eq_('SAMEORIGIN', resp['X-Frame-Options'])
+
+
+def test_xframe_deny_middleware():
+    resp = _wrapped_resp(decorators.xframe_deny, view_fn)
+    assert 'X-Frame-Options' in resp
+    eq_('DENY', resp['X-Frame-Options'])
+
+
 def test_xframe_middleware_disable():
-    mw = middleware.FrameOptionsHeader()
-    resp = HttpResponse()
-    resp.no_frame_options = True
-    resp = mw.process_response({}, resp)
+    resp = _wrapped_resp(decorators.xframe_allow, view_fn,
+                         middleware.FrameOptionsHeader)
     assert not 'X-Frame-Options' in resp
 
 
@@ -91,6 +115,20 @@ def test_xrobotstag_middleware():
 def test_xrobotstag_middleware_no_overwrite():
     mw = middleware.RobotsTagHeader()
     resp = HttpResponse()
-    resp['X-Robots-Tag'] = 'noindex'
+    resp['X-Robots-Tag'] = 'bananas'
     resp = mw.process_response({}, resp)
-    eq_('noindex', resp['X-Robots-Tag'])
+    eq_('bananas', resp['X-Robots-Tag'])
+
+
+def test_xrobots_exempt():
+    resp = _wrapped_resp(decorators.xrobots_exempt, view_fn,
+                         middleware.RobotsTagHeader)
+    assert 'X-Robots-Tag' not in resp
+
+
+def test_xrobots_tag_decorator():
+    value = 'noindex,nofollow'
+    resp = _wrapped_resp(decorators.xrobots_tag(value), view_fn,
+                         middleware.RobotsTagHeader)
+    assert 'X-Robots-Tag' in resp
+    eq_(value, resp['X-Robots-Tag'])
