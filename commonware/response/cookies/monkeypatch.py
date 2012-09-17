@@ -55,4 +55,6 @@ def set_cookie_secure(f):
         return r
     return wrapped
 
-HttpResponse.set_cookie = set_cookie_secure(HttpResponse.set_cookie)
+
+def patch_all():
+    HttpResponse.set_cookie = set_cookie_secure(HttpResponse.set_cookie)

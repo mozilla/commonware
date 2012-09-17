@@ -1,2 +1,5 @@
 # Import monkeypatch code at startup.
-import commonware.response.cookies.monkeypatch
+from commonware.response.cookies.monkeypatch import patch_all
+
+
+patch_all()

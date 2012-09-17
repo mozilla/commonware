@@ -2,7 +2,10 @@ from django.http import HttpResponse
 from mock import patch
 from nose.tools import eq_
 
-import commonware.response.cookies.monkeypatch
+from commonware.response.cookies.monkeypatch import patch_all
+
+
+patch_all()
 
 
 def test_secure_cookies():
