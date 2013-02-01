@@ -42,14 +42,14 @@ class RobotsTagHeader(object):
 class StrictTransportMiddleware(object):
     """
     Set the Strict-Transport-Security header on responses. Use the
-    STS_MAX_AGE setting to control the max-age value. (Default: 1 month.)
+    STS_MAX_AGE setting to control the max-age value. (Default: 1 year.)
     Use the STS_SUBDOMAINS boolean to add includeSubdomains.
     (Default: False.)
     """
 
     def process_response(self, request, response):
         if request.is_secure():
-            age = getattr(settings, 'STS_MAX_AGE', 2592000)  # 30 days.
+            age = getattr(settings, 'STS_MAX_AGE', 31536000)  # 365 days.
             subdomains = getattr(settings, 'STS_SUBDOMAINS', False)
             val = 'max-age=%d' % age
             if subdomains:
