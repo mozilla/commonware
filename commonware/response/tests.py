@@ -35,7 +35,7 @@ def test_sts_middleware():
     assert 'Strict-Transport-Security' not in resp
     resp = _make_resp(middleware.StrictTransportMiddleware, secure=True)
     assert 'Strict-Transport-Security' in resp
-    eq_('max-age=2592000', resp['Strict-Transport-Security'])
+    eq_('max-age=31536000', resp['Strict-Transport-Security'])
 
 
 @mock.patch.object(settings._wrapped, 'STS_SUBDOMAINS', True)
