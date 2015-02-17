@@ -24,5 +24,6 @@ class ThreadRequestMiddleware(object):
         _local.remote_addr = request.META.get('REMOTE_ADDR', '')
         name = '<anon>'
         if hasattr(request, 'user') and request.user.is_authenticated():
-            name = encoding.smart_str(request.user.username)
+            field = getattr(request.user, 'USERNAME_FIELD', 'username')
+            name = encoding.smart_str(getattr(request.user, field, ''))
         _local.username = name
