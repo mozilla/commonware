@@ -13,8 +13,9 @@ COOKIES_HTTPONLY = False in settings.py.
 Note: The httponly flag on cookies requires Python 2.6. Patches welcome.
 """
 
-from functools import wraps
 import os
+import warnings
+from functools import wraps
 
 from django.conf import settings
 from django.http import HttpResponse
@@ -27,6 +28,13 @@ def set_cookie_secure(f):
     """
     @wraps(f)
     def wrapped(self, *args, **kwargs):
+        # Insecure cookies outside of local development is a bad idea.
+        if (getattr(settings, 'COOKIES_SECURE', None) != False and
+            not settings.DEBUG):
+            warnings.warn('It looks like this is a server instance, but secure '
+                          'cookies are disabled. You should make sure '
+                          'COOKIES_SECURE is set to True.')
+
         # Default to secure=True unless:
         # - feature disabled or
         # - secure=* defined in set_cookie call or
