@@ -8,3 +8,5 @@ pip-log.txt
 *.egg-info
 dist
 .coverage
+venv/
+src/
