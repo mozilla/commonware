@@ -2,16 +2,16 @@
     "name": "Commonware",
     "description": "A collection of small but useful tools for Django.",
     "repository": {
-        "url": "https://github.com/jsocol/commonware",
+        "url": "https://github.com/mozilla/commonware",
         "license": "BSD 3-Clause"
     },
     "participate": {
-        "home": "https://github.com/jsocol/commonware",
-        "docs": "https://github.com/jsocol/commonware"
+        "home": "https://github.com/mozilla/commonware",
+        "docs": "https://github.com/mozilla/commonware"
     },
     "bugs": {
-        "list": "https://github.com/jsocol/commonware/issues",
-        "report": "https://github.com/jsocol/commonware/issues/new"
+        "list": "https://github.com/mozilla/commonware/issues",
+        "report": "https://github.com/mozilla/commonware/issues/new"
     },
     "keywords": [
         "django",

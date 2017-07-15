@@ -6,8 +6,6 @@ path = lambda *a: os.path.join(ROOT, *a)
 
 JINJA_CONFIG = {}
 
-STS_SUBDOMAINS = False
-
 KNOWN_PROXIES = []
 
 SECRET_KEY = 'not so secret key for testing'

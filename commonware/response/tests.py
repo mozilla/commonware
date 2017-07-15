@@ -2,7 +2,10 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.test.client import RequestFactory
 
-import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 from nose.tools import eq_
 
 from commonware.response import decorators, middleware
@@ -28,21 +31,6 @@ def _make_resp(mw_cls, secure=False):
         req.is_secure = lambda: True
     resp = mw.process_response(req, HttpResponse())
     return resp
-
-
-def test_sts_middleware():
-    resp = _make_resp(middleware.StrictTransportMiddleware)
-    assert 'Strict-Transport-Security' not in resp
-    resp = _make_resp(middleware.StrictTransportMiddleware, secure=True)
-    assert 'Strict-Transport-Security' in resp
-    eq_('max-age=31536000', resp['Strict-Transport-Security'])
-
-
-@mock.patch.object(settings._wrapped, 'STS_SUBDOMAINS', True)
-def test_sts_middleware_subdomains():
-    resp = _make_resp(middleware.StrictTransportMiddleware, secure=True)
-    assert 'Strict-Transport-Security' in resp
-    assert resp['Strict-Transport-Security'].endswith('includeSubDomains')
 
 
 def test_xframe_middleware():
