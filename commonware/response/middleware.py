@@ -12,7 +12,7 @@ class FrameOptionsHeader(object):
         if hasattr(response, 'no_frame_options'):
             return response
 
-        if not 'X-Frame-Options' in response:
+        if 'X-Frame-Options' not in response:
             response['X-Frame-Options'] = 'DENY'
 
         return response
@@ -32,7 +32,7 @@ class RobotsTagHeader(object):
         if getattr(response, 'no_robots_tag', False):
             return response
 
-        if not 'X-Robots-Tag' in response:
+        if 'X-Robots-Tag' not in response:
             default = getattr(settings, 'X_ROBOTS_DEFAULT', 'noodp')
             response['X-Robots-Tag'] = default
 
@@ -45,7 +45,8 @@ class StrictTransportMiddleware(object):
     """
 
     def __init__(self):
-        raise DeprecationWarning("https://docs.djangoproject.com/en/1.8/ref/middleware/#security-middleware")
+        raise DeprecationWarning("https://docs.djangoproject.com/en/1.8"
+                                 "/ref/middleware/#security-middleware")
 
 
 class XSSProtectionHeader(object):
@@ -56,7 +57,7 @@ class XSSProtectionHeader(object):
     """
 
     def process_response(self, request, response):
-        if not 'X-XSS-Protection' in response:
+        if 'X-XSS-Protection' not in response:
             response['X-XSS-Protection'] = '1; mode=block'
         return response
 
@@ -69,6 +70,6 @@ class ContentTypeOptionsHeader(object):
     """
 
     def process_response(self, request, response):
-        if not 'X-Content-Type-Options' in response:
+        if 'X-Content-Type-Options' not in response:
             response['X-Content-Type-Options'] = 'nosniff'
         return response

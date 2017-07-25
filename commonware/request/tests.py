@@ -1,9 +1,5 @@
-from django.conf import settings
+from django.test.utils import override_settings
 
-try:
-    from unittest import mock
-except ImportError:
-    import mock
 from nose.tools import eq_
 from test_utils import RequestFactory
 
@@ -27,7 +23,7 @@ def test_xff():
     eq_('127.0.0.1', req.META['REMOTE_ADDR'])
 
 
-@mock.patch.object(settings, 'KNOWN_PROXIES', ['127.0.0.1'])
+@override_settings(KNOWN_PROXIES=['127.0.0.1'])
 def test_xff_known():
     req = get_req()
     mw.process_request(req)
@@ -39,15 +35,14 @@ def test_xff_known():
     eq_('127.0.0.1', req.META['REMOTE_ADDR'])
 
 
-@mock.patch.object(settings, 'KNOWN_PROXIES',
-                   ['127.0.0.1', '2.3.4.5'])
+@override_settings(KNOWN_PROXIES=['127.0.0.1', '2.3.4.5'])
 def test_xff_multiknown():
     req = get_req()
     mw.process_request(req)
     eq_('1.2.3.4', req.META['REMOTE_ADDR'])
 
 
-@mock.patch.object(settings, 'KNOWN_PROXIES', ['127.0.0.1'])
+@override_settings(KNOWN_PROXIES=['127.0.0.1'])
 def test_xff_bad_address():
     req = get_req()
     req.META['HTTP_X_FORWARDED_FOR'] += ',foobar'
@@ -55,8 +50,7 @@ def test_xff_bad_address():
     eq_('2.3.4.5', req.META['REMOTE_ADDR'])
 
 
-@mock.patch.object(settings, 'KNOWN_PROXIES',
-                   ['127.0.0.1', '2.3.4.5'])
+@override_settings(KNOWN_PROXIES=['127.0.0.1', '2.3.4.5'])
 def test_xff_all_known():
     """If all the remotes are known, use the last one."""
     req = get_req()

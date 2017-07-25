@@ -38,5 +38,5 @@ class SetRemoteAddrFromForwardedFor(object):
         ips.reverse()
         for ip in ips:
             request.META['REMOTE_ADDR'] = ip
-            if not ip in known:
+            if ip not in known:
                 break
