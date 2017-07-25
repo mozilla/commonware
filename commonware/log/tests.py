@@ -23,7 +23,6 @@ class ThreadRequestMiddlewareTests(SimpleTestCase):
         self.middleware.process_request(req)
         eq_(get_remote_addr(), '63.245.217.194')
 
-
     def test_get_username_no_username_field(self):
         req = RequestFactory().get('/')
         req.user = mock.Mock()
@@ -32,7 +31,6 @@ class ThreadRequestMiddlewareTests(SimpleTestCase):
         eq_(get_username(), '<anon>')
         self.middleware.process_request(req)
         eq_(get_username(), 'my-username')
-
 
     def test_get_username_with_username_field(self):
         req = RequestFactory().get('/')

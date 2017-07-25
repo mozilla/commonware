@@ -1,17 +1,13 @@
-from django.conf import settings
 from django.http import HttpResponse
 from django.test.client import RequestFactory
 
-try:
-    from unittest import mock
-except ImportError:
-    import mock
 from nose.tools import eq_
 
 from commonware.response import decorators, middleware
 
 
-view_fn = lambda *a: HttpResponse()
+def view_fn(*args):
+    return HttpResponse()
 
 
 def _wrapped_resp(decorator, fn, mw_cls=None):
@@ -63,7 +59,7 @@ def test_xframe_deny_middleware():
 def test_xframe_middleware_disable():
     resp = _wrapped_resp(decorators.xframe_allow, view_fn,
                          middleware.FrameOptionsHeader)
-    assert not 'X-Frame-Options' in resp
+    assert 'X-Frame-Options' not in resp
 
 
 def test_xssprotection_middleware():

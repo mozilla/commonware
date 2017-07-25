@@ -2,8 +2,7 @@ import logging
 
 # ThreadRequestMiddleware isn't used here but is imported so
 # commonware.log.ThreadRequestMiddleware works.
-from commonware.log.middleware import (get_remote_addr, get_username,
-                                       ThreadRequestMiddleware)
+from commonware.log.middleware import get_remote_addr, get_username, ThreadRequestMiddleware  # noqa
 
 
 def getLogger(name=None):
