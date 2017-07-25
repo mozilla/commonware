@@ -33,21 +33,6 @@ def _make_resp(mw_cls, secure=False):
     return resp
 
 
-def test_sts_middleware():
-    resp = _make_resp(middleware.StrictTransportMiddleware)
-    assert 'Strict-Transport-Security' not in resp
-    resp = _make_resp(middleware.StrictTransportMiddleware, secure=True)
-    assert 'Strict-Transport-Security' in resp
-    eq_('max-age=31536000', resp['Strict-Transport-Security'])
-
-
-@mock.patch.object(settings, 'SECURE_HSTS_INCLUDE_SUBDOMAINS', True)
-def test_sts_middleware_subdomains():
-    resp = _make_resp(middleware.StrictTransportMiddleware, secure=True)
-    assert 'Strict-Transport-Security' in resp
-    assert resp['Strict-Transport-Security'].endswith('includeSubDomains')
-
-
 def test_xframe_middleware():
     resp = _make_resp(middleware.FrameOptionsHeader)
     assert 'X-Frame-Options' in resp
