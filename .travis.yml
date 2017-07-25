@@ -1,7 +1,17 @@
 sudo: false
 language: python
 python:
- - "2.7"
- - "3.6"
+  - "2.7"
+  - "3.6"
 install: pip install tox-travis
 script: tox
+deploy:
+  provider: pypi
+  distributions: sdist bdist_wheel
+  user: pmclanahan
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: mozilla/commonware
+  password:
+    secure: rfmIIYgx4otFHj3TxL/naC91zk1wRgY1Oh4NXH/BbHmLUmA5VME+75uvPXd4flsr4gqCERClZP52b0gIm3wxu2u7PK4HXwQfIH1Wg2SgLSiyV56TpEWdunk+I7gUpkacNwINdPg/RJJtkFn5WpUtXX8PDd2GjHLfKnXSZDCdmFU=
