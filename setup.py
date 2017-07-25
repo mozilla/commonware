@@ -9,7 +9,7 @@ setup(
     long_description=open('README.rst').read(),
     author='James Socol',
     author_email='james@mozilla.com',
-    url='http://github.com/jsocol/commonware',
+    url='http://github.com/mozilla/commonware',
     license='BSD',
     packages=find_packages(),
     include_package_data=True,
