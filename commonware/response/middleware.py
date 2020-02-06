@@ -39,16 +39,6 @@ class RobotsTagHeader(object):
         return response
 
 
-class StrictTransportMiddleware(object):
-    """
-    DEPRECATED: https://docs.djangoproject.com/en/1.8/ref/middleware/#security-middleware
-    """
-
-    def __init__(self):
-        raise DeprecationWarning("https://docs.djangoproject.com/en/1.8"
-                                 "/ref/middleware/#security-middleware")
-
-
 class XSSProtectionHeader(object):
     """
     Set the X-XSS-Protection header on responses. Defaults to
