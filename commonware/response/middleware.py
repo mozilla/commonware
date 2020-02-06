@@ -1,7 +1,8 @@
 from django.conf import settings
+from django.utils.deprecation import MiddlewareMixin
 
 
-class FrameOptionsHeader(object):
+class FrameOptionsHeader(MiddlewareMixin):
     """
     Set an X-Frame-Options header. Default to DENY. Set
     response['X-Frame-Options'] = 'SAMEORIGIN'
@@ -18,7 +19,7 @@ class FrameOptionsHeader(object):
         return response
 
 
-class RobotsTagHeader(object):
+class RobotsTagHeader(MiddlewareMixin):
     """Set an X-Robots-Tag header.
 
     Default to noodp to avoid using directories for page titles. Set
@@ -39,7 +40,7 @@ class RobotsTagHeader(object):
         return response
 
 
-class XSSProtectionHeader(object):
+class XSSProtectionHeader(MiddlewareMixin):
     """
     Set the X-XSS-Protection header on responses. Defaults to
     '1; mode=block'. Set response['X-XSS-Protection'] = '0' (disable)
@@ -52,7 +53,7 @@ class XSSProtectionHeader(object):
         return response
 
 
-class ContentTypeOptionsHeader(object):
+class ContentTypeOptionsHeader(MiddlewareMixin):
     """
     Set the X-Content-Type-Options header on responses. Defaults
     to 'nosniff'. Set response['X-Content-Type-Options'] = ''

@@ -1,6 +1,7 @@
 import threading
 
 from django.utils import encoding
+from django.utils.deprecation import MiddlewareMixin
 
 
 _local = threading.local()
@@ -14,7 +15,7 @@ def get_username():
     return getattr(_local, 'username', '<anon>')
 
 
-class ThreadRequestMiddleware(object):
+class ThreadRequestMiddleware(MiddlewareMixin):
     """
     Store the current remote address in thread-local storage so our
     logging wrapper can access it.
