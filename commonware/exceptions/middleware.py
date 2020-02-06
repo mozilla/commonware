@@ -1,7 +1,8 @@
 from django.conf import settings
+from django.utils.deprecation import MiddlewareMixin
 
 
-class ScrubRequestOnException(object):
+class ScrubRequestOnException(MiddlewareMixin):
     """
     Hide sensitive information so they're not recorded in error logging.
     * passwords in request.POST

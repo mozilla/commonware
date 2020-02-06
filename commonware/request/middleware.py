@@ -1,6 +1,8 @@
 import socket
 
 from django.conf import settings
+from django.utils.deprecation import MiddlewareMixin
+
 
 TYPES = (socket.AF_INET, socket.AF_INET6)
 
@@ -15,7 +17,7 @@ def is_valid(ip):
     return False
 
 
-class SetRemoteAddrFromForwardedFor(object):
+class SetRemoteAddrFromForwardedFor(MiddlewareMixin):
     """
     Replaces the Django 1.1 middleware to replace the remote IP with
     the value of the X-Forwarded-For header for use behind reverse proxy
