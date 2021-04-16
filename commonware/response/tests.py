@@ -116,3 +116,9 @@ def test_xrobots_tag_decorator():
                          middleware.RobotsTagHeader)
     assert 'X-Robots-Tag' in resp
     eq_(value, resp['X-Robots-Tag'])
+
+
+def test_permissions_policy_middleware():
+    resp = _make_resp(middleware.PermissionsPolicyHeader)
+    assert 'Permissions-Policy' in resp
+    eq_('interest-cohort=()', resp['Permissions-Policy'])

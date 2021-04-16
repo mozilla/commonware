@@ -64,3 +64,17 @@ class ContentTypeOptionsHeader(MiddlewareMixin):
         if 'X-Content-Type-Options' not in response:
             response['X-Content-Type-Options'] = 'nosniff'
         return response
+
+
+class PermissionsPolicyHeader(MiddlewareMixin):
+    """
+    Set the `Permissions-Policy: interest-cohort=()` header if no
+    `Permissions-Policy` header is in the response. This will opt
+    the site out of the FLoC protocol.
+    See https://paramdeo.com//blog/opting-your-website-out-of-googles-floc-network
+    """
+
+    def process_response(self, request, response):
+        if 'Permissions-Policy' not in response:
+            response['Permissions-Policy'] = 'interest-cohort=()'
+        return response
